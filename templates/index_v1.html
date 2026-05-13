@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile Clinic - Dyslexia Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Hamburger Menu Button */
+        .menu-btn {
+            width: 35px;
+            height: 35px;
+            background: #1976d2;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: #1565c0;
+        }
+
+        .menu-btn span {
+            width: 20px;
+            height: 2px;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: #1976d2;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h3 {
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .menu-item span {
+            font-size: 20px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 10px 20px;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1976d2;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #1976d2;
+        }
+
+        .login-btn {
+            background: #1976d2;
+            color: white;
+            padding: 10px 28px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+
+        /* User Profile Section */
+        .user-profile {
+            position: relative;
+            display: none;
+        }
+
+        .user-profile.active {
+            display: block;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            background: #1565c0;
+            transform: scale(1.05);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            display: block;
+        }
+
+        .user-info {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 4px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #333;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-top: 1px solid #e0e0e0;
+            color: #d32f2f;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-buttons.hidden {
+            display: none;
+        }
+
+        /* Login Popup Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .login-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            color: #1976d2;
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+        }
+
+        .modal-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Test History Modal */
+        .history-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .history-modal.active {
+            display: flex;
+        }
+
+        .history-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .history-header h2 {
+            color: #1976d2;
+            font-size: 28px;
+        }
+
+        .close-history-btn {
+            background: #f0f0f0;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+
+        .close-history-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .history-card {
+            background: #f8f9fa;
+            border: 2px solid #e3f2fd;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .history-card:hover {
+            border-color: #1976d2;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.1);
+        }
+
+        .history-date {
+            color: #1976d2;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .history-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .history-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .history-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .history-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-history-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-left {
+            flex: 1;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .content-left h1 {
+            font-size: 56px;
+            color: #1976d2;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            font-weight: 800;
+        }
+
+        .content-left h1 .highlight {
+            color: #2196f3;
+        }
+
+        .content-left p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .get-started-btn {
+            background: #1976d2;
+            color: white;
+            padding: 16px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            display: inline-block;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(25, 118, 210, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .get-started-btn:hover {
+            background: #1565c0;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(25, 118, 210, 0.4);
+        }
+
+        /* Features Section */
+        .features {
+            display: flex;
+            gap: 30px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .feature-card {
+            flex: 1;
+            min-width: 180px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            nav {
+                padding: 20px 30px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .main-content {
+                padding: 50px 30px;
+            }
+
+            .content-left h1 {
+                font-size: 42px;
+            }
+
+            .content-left p {
+                font-size: 16px;
+            }
+
+            .features {
+                margin-top: 40px;
+            }
+
+            .history-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links a {
+                display: none;
+            }
+
+            .main-content {
+                padding: 30px 20px;
+            }
+
+            .content-left h1 {
+                font-size: 36px;
+            }
+
+            .features {
+                flex-direction: column;
+            }
+
+            .feature-card {
+                min-width: 100%;
+            }
+
+            .auth-buttons {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .login-btn {
+                padding: 8px 20px;
+                font-size: 14px;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+            }
+
+            .history-content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+            <button class="close-btn" onclick="toggleSidebar()">×</button>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#home" class="menu-item">
+                <span>🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="#services" class="menu-item">
+                <span>🏥</span>
+                <span>Services</span>
+            </a>
+            <a href="#about" class="menu-item">
+                <span>ℹ️</span>
+                <span>About</span>
+            </a>
+            <a href="#contact" class="menu-item">
+                <span>📞</span>
+                <span>Contact</span>
+            </a>
+            <div class="menu-divider"></div>
+            <!-- Test History - Only visible when logged in -->
+            <div id="testHistoryMenu" style="display: none;">
+                <a href="javascript:void(0)" class="menu-item" onclick="showTestHistory()">
+                    <span>📊</span>
+                    <span>Test History</span>
+                </a>
+                <div class="menu-divider"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-icon">🔒</div>
+            <h2>Login Required</h2>
+            <p>Please login or sign up to take the dyslexia assessment test and access all features.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="window.location.href='/login'">Login</button>
+                <button class="modal-btn secondary" onclick="closeLoginModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test History Modal -->
+    <div class="history-modal" id="historyModal">
+        <div class="history-content">
+            <div class="history-header">
+                <h2>📊 Test History</h2>
+                <button class="close-history-btn" onclick="closeHistoryModal()">×</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="no-history">
+                    <div class="no-history-icon">📭</div>
+                    <p>No test history available yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <div class="logo-icon">⚕️</div>
+                <span>Smile Clinic</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#services">Services</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+           
+            <!-- Auth Buttons (shown when not logged in) -->
+            <div class="auth-buttons" id="authButtons">
+                <button class="login-btn" onclick="window.location.href='/login'">Login</button>
+                <button class="login-btn" onclick="window.location.href='/signup'">Sign Up</button>
+            </div>
+
+            <!-- User Profile (shown when logged in) -->
+            <div class="user-profile" id="userProfile">
+                <div class="user-avatar" id="userAvatar" onclick="toggleDropdown()">
+                    U
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-name" id="userName">User Name</div>
+                        <div class="user-email" id="userEmail">user@example.com</div>
+                    </div>
+                    <div class="dropdown-item" onclick="window.location.href = '/test';">
+                        📝 Take Test
+                    </div>
+                    <div class="dropdown-item" onclick="showTestHistory()">
+                        📊 Test History
+                    </div>
+                    <div class="dropdown-item" onclick="logout()">
+                        🚪 Logout
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-left">
+            <h1>
+                Welcome to<br>
+                <span class="highlight">Smile Clinic</span> Website
+            </h1>
+            <p>
+                Modern healthcare. Expert doctors. Convenient scheduling. Your health
+                is our #1 priority—experience the future of clinics today.
+            </p>
+            <button class="get-started-btn" onclick="handleGetStarted()">
+                Get Started
+            </button>
+
+            <!-- Features Section -->
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">✍️</div>
+                    <div class="feature-title">Spelling Correction</div>
+                    <div class="feature-text">Advanced AI-powered spelling assessment</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-title">Word Sense Test</div>
+                    <div class="feature-text">Comprehensive disambiguation analysis</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <div class="feature-title">3 Languages</div>
+                    <div class="feature-text">English, Hindi, and Kannada support</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase Configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        import { getDatabase, ref, get, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjNK9sUByYR6cJvuqmiZWvsd47cMKV_lU",
+            authDomain: "dyexdect.firebaseapp.com",
+            databaseURL: "https://dyexdect-default-rtdb.firebaseio.com",
+            projectId: "dyexdect",
+            storageBucket: "dyexdect.firebasestorage.app",
+            messagingSenderId: "749021614757",
+            appId: "1:749021614757:web:8c3b027d88010bc4dd334c",
+            measurementId: "G-5734WM4M2B"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        let isUserLoggedIn = false;
+        let currentUser = null;
+
+        // Check Firebase authentication status on page load
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                isUserLoggedIn = true;
+                currentUser = user;
+                const userName = user.displayName || user.email.split('@')[0];
+                const userEmail = user.email;
+                showUserProfile({ name: userName, email: userEmail });
+                // Show test history in sidebar
+                document.getElementById('testHistoryMenu').style.display = 'block';
+            } else {
+                // User is signed out
+                isUserLoggedIn = false;
+                currentUser = null;
+                showAuthButtons();
+                // Hide test history in sidebar
+                document.getElementById('testHistoryMenu').style.display = 'none';
+            }
+        });
+
+        function showUserProfile(user) {
+            document.getElementById('authButtons').classList.add('hidden');
+            const userProfile = document.getElementById('userProfile');
+            userProfile.classList.add('active');
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userEmail').textContent = user.email;
+            const initial = user.name.charAt(0).toUpperCase();
+            document.getElementById('userAvatar').textContent = initial;
+        }
+
+        function showAuthButtons() {
+            document.getElementById('authButtons').classList.remove('hidden');
+            document.getElementById('userProfile').classList.remove('active');
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function handleGetStarted() {
+            if (isUserLoggedIn) {
+                window.location.href = '/test';
+            } else {
+                document.getElementById('loginModal').classList.add('active');
+            }
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').classList.remove('active');
+        }
+
+        async function showTestHistory() {
+            if (!isUserLoggedIn || !currentUser) {
+                alert('Please login to view test history');
+                return;
+            }
+
+            // Close sidebar if open
+            toggleSidebar();
+
+            // Show history modal
+            document.getElementById('historyModal').classList.add('active');
+
+            // Fetch test history from Firebase
+            try {
+                const testsRef = ref(database, 'test_results');
+                const userTestsQuery = query(testsRef, orderByChild('userId'), equalTo(currentUser.uid));
+                const snapshot = await get(userTestsQuery);
+
+                const historyList = document.getElementById('historyList');
+               
+                if (snapshot.exists()) {
+                    const tests = [];
+                    snapshot.forEach((childSnapshot) => {
+                        tests.push({
+                            id: childSnapshot.key,
+                            ...childSnapshot.val()
+                        });
+                    });
+
+                    // Sort by timestamp (newest first)
+                    tests.sort((a, b) => b.timestamp - a.timestamp);
+
+                    // Display test history
+                    historyList.innerHTML = tests.map(test => {
+                        const date = new Date(test.timestamp);
+                        const formattedDate = date.toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        return `
+                            <div class="history-card">
+                                <div class="history-date">📅 ${formattedDate}</div>
+                                <div class="history-details">
+                                    <div class="history-item">
+                                        <div class="history-label">Age</div>
+                                        <div class="history-value">${test.age} years</div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-label">Language</div>
+                                        <div class="history-value">${test.language.charAt(0).toUpperCase() + test.language.slice(1)}</div>
+                                    </div>
+                                    ${test.spellingTest ? `
+                                        <div class="history-item">
+                                            <div class="history-label">Spelling Test</div>
+                                            <div class="history-value">✅ Completed</div>
+                                        </div>
+                                    ` : ''}
+                                    ${test.wsdTest ? `
+                                        <div class="history-item">
+                                            <div class="history-label">Word Sense Test</div>
+                                            <div class="history-value">✅ Completed</div>
+                                        </div>
+                                    ` : ''}
+                                    ${test.wsdTest && test.wsdTest.confidence ? `
+                                        <div class="history-item">
+                                            <div class="history-label">Confidence Score</div>
+                                            <div class="history-value">${(test.wsdTest.confidence * 100).toFixed(1)}%</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    historyList.innerHTML = `
+                        <div class="no-history">
+                            <div class="no-history-icon">📭</div>
+                            <p>No test history available yet.</p>
+                            <p style="margin-top: 10px; font-size: 14px;">Take your first test to see results here!</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error fetching test history:', error);
+                alert('Error loading test history: ' + error.message);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('userDropdown');
+           
+            if (!userProfile.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        document.getElementById('historyModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeHistoryModal();
+            }
+        });
+
+        async function logout() {
+            try {
+                await signOut(auth);
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userName');
+                showAuthButtons();
+                alert('Logged out successfully!');
+            } catch (error) {
+                console.error('Logout failed:', error);
+                alert('Logout failed. Please try again.');
+            }
+        }
+
+        // Make functions globally available
+        window.toggleDropdown = toggleDropdown;
+        window.toggleSidebar = toggleSidebar;
+        window.handleGetStarted = handleGetStarted;
+        window.closeLoginModal = closeLoginModal;
+        window.closeHistoryModal = closeHistoryModal;
+        window.showTestHistory = showTestHistory;
+        window.logout = logout;
+    </script>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dyslexia Screening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Google Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Logo in top-left */
+        .logo-header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #1976d2;
+            text-decoration: none;
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-header:hover {
+            transform: translateX(-2px);
+            color: #1565c0;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .login-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .login-header h2 {
+            font-size: 32px;
+            color: #1976d2;
+            font-weight: 500;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: linear-gradient(135deg, #f44336 0%, #e53935 100%);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+            animation: shake 0.4s ease;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Form Styling */
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px 18px;
+            padding-top: 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Google Sans', sans-serif;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            color: #333;
+        }
+
+        .input-group input:focus {
+            border-color: #1976d2;
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 50%;
+            left: 18px;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 15px;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: white;
+            padding: 0 4px;
+            font-weight: 400;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: 0;
+            font-size: 12px;
+            color: #1976d2;
+            font-weight: 500;
+        }
+
+        /* Password field initially hidden */
+        #password-group {
+            display: none;
+            animation: fadeInDown 0.4s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Continue Button */
+        button.continue {
+            font-family: 'Google Sans', sans-serif;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
+        }
+
+        button.continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
+        }
+
+        button.continue:active {
+            transform: translateY(0);
+        }
+
+        button.continue:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Sign up link */
+        .signup-text {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+
+        .signup-text a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .signup-text a:hover {
+            color: #1565c0;
+            text-decoration: underline;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+        }
+
+        .divider span {
+            margin: 0 16px;
+            color: #999;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Google Button */
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background-color: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Google Sans', sans-serif;
+        }
+
+        .social-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #1976d2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: #1976d2;
+            display: flex;
+            gap: 16px;
+        }
+
+        footer a {
+            color: #1976d2;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 400;
+        }
+
+        footer a:hover {
+            color: #1565c0;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 36px 28px;
+                margin: 20px;
+            }
+
+            .login-header h2 {
+                font-size: 28px;
+            }
+
+            footer {
+                bottom: 10px;
+                font-size: 12px;
+                gap: 12px;
+            }
+
+            .logo-header {
+                font-size: 16px;
+            }
+
+            .logo-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 28px 20px;
+            }
+
+            .login-header h2 {
+                font-size: 24px;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <a href="/" class="logo-header">
+        <div class="logo-icon">D</div>
+        <span>Dyslexia Screening</span>
+    </a>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="login-header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to continue your assessment</p>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <form id="login-form">
+            <div class="input-group">
+                <input type="email" id="email" placeholder=" " required autocomplete="email">
+                <label for="email">Email Address</label>
+            </div>
+
+            <!-- Password field - initially hidden -->
+            <div class="input-group" id="password-group">
+                <input type="password" id="password" placeholder=" " autocomplete="current-password">
+                <label for="password">Password</label>
+            </div>
+
+            <button class="continue" id="continue-btn" type="button">Continue</button>
+        </form>
+
+        <p class="signup-text">Don't have an account? <a href="/signup">Sign Up</a></p>
+
+        <div class="divider"><span>Or</span></div>
+
+        <div class="social-btn" id="google-btn">
+            <img src="https://img.icons8.com/color/48/google-logo.png" alt="Google"/>
+            Continue with Google
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <a href="#">Terms of Use</a>
+        <span style="color: #ccc;">|</span>
+        <a href="#">Privacy Policy</a>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAjNK9sUByYR6cJvuqmiZWvsd47cMKV_lU",
+            authDomain: "dyexdect.firebaseapp.com",
+            databaseURL: "https://dyexdect-default-rtdb.firebaseio.com",
+            projectId: "dyexdect",
+            storageBucket: "dyexdect.firebasestorage.app",
+            messagingSenderId: "749021614757",
+            appId: "1:749021614757:web:8c3b027d88010bc4dd334c",
+            measurementId: "G-5734WM4M2B"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+
+        // Set persistence to LOCAL
+        setPersistence(auth, browserLocalPersistence);
+
+        const continueBtn = document.getElementById('continue-btn');
+        const emailInput = document.getElementById('email');
+        const passwordGroup = document.getElementById('password-group');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('error-message');
+        const loginForm = document.getElementById('login-form');
+
+        let isPasswordStep = false;
+
+        // Prevent form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Main continue button handler
+        continueBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+           
+            console.log('Continue clicked, isPasswordStep:', isPasswordStep);
+           
+            if (!isPasswordStep) {
+                // STEP 1: Email validation
+                const email = emailInput.value.trim();
+                console.log('Email entered:', email);
+               
+                if (email === "") {
+                    showError("Please enter your email address");
+                    return;
+                }
+               
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showError("Please enter a valid email address");
+                    return;
+                }
+               
+                // Show password field
+                console.log('Showing password field');
+                passwordGroup.style.display = 'block';
+                emailInput.readOnly = true;
+                continueBtn.textContent = "Log In";
+                isPasswordStep = true;
+                passwordInput.focus();
+               
+            } else {
+                // STEP 2: Password validation and login
+                const email = emailInput.value.trim();
+                const password = passwordInput.value.trim();
+               
+                console.log('Attempting login with email:', email);
+               
+                if (password === "") {
+                    showError("Please enter your password");
+                    return;
+                }
+               
+                if (password.length < 6) {
+                    showError("Password must be at least 6 characters");
+                    return;
+                }
+
+                continueBtn.disabled = true;
+                continueBtn.textContent = "Logging in...";
+
+                signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        console.log("✅ Login successful:", userCredential.user);
+                        localStorage.setItem('userEmail', userCredential.user.email);
+                        localStorage.setItem('userName', userCredential.user.displayName || userCredential.user.email.split('@')[0]);
+                       
+                        // Redirect to home
+                        window.location.href = "/";
+                    })
+                    .catch((error) => {
+                        console.error("❌ Login error:", error);
+                        let errorMsg = "Login failed. Please try again.";
+                       
+                        if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                            errorMsg = "Incorrect password. Please try again.";
+                        } else if (error.code === 'auth/user-not-found') {
+                            errorMsg = "No account found with this email.";
+                        } else if (error.code === 'auth/invalid-email') {
+                            errorMsg = "Invalid email address.";
+                        } else if (error.code === 'auth/too-many-requests') {
+                            errorMsg = "Too many failed attempts. Please try again later.";
+                        }
+                       
+                        showError(errorMsg);
+                        continueBtn.disabled = false;
+                        continueBtn.textContent = "Log In";
+                    });
+            }
+        });
+
+        // Enter key handlers
+        emailInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                continueBtn.click();
+            }
+        });
+
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                continueBtn.click();
+            }
+        });
+
+        // Google login
+        const googleBtn = document.getElementById('google-btn');
+        const googleProvider = new GoogleAuthProvider();
+
+        googleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Google login clicked');
+           
+            googleBtn.style.opacity = '0.6';
+            googleBtn.style.pointerEvents = 'none';
+
+            signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    console.log("✅ Google login successful:", result.user);
+                    localStorage.setItem('userEmail', result.user.email);
+                    localStorage.setItem('userName', result.user.displayName || result.user.email.split('@')[0]);
+                    window.location.href = "/";
+                })
+                .catch((error) => {
+                    console.error("❌ Google login error:", error);
+                    showError("Google login failed: " + error.message);
+                    googleBtn.style.opacity = '1';
+                    googleBtn.style.pointerEvents = 'auto';
+                });
+        });
+    </script>
+</body>
+</html>
